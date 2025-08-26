@@ -111,7 +111,7 @@ flowchart LR
 ## Release Management Flow
 
 ```mermaid
-gitgraph
+gitGraph
     commit id: "Initial"
     branch develop
     checkout develop
@@ -129,7 +129,7 @@ gitgraph
     
     checkout main
     merge develop
-    commit id: "v1.1.0" tag: "v1.1.0"
+    commit id: "v1.1.0"
     
     checkout develop
     commit id: "feat: add dashboard"
