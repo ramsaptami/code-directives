@@ -1,25 +1,25 @@
 #!/usr/bin/env node
 
-// Best Practices SDK CLI Entry Point
+// Code Directives CLI Entry Point
 const { Command } = require('commander');
 const chalk = require('chalk');
 const program = new Command();
 
 // CLI version and description
 program
-  .name('bp')
-  .description('Best Practices SDK - Automate code quality and development workflows')
+  .name('cd')
+  .description('Code Directives - AI-powered development framework')
   .version('1.0.0');
 
 // Initialize new project command
 program
   .command('init <project-name>')
-  .description('Initialize a new project with best practices')
+  .description('Initialize a new project with code directives')
   .option('-t, --template <type>', 'Project template (web-app, api, library)', 'web-app')
   .option('--no-github', 'Skip GitHub repository creation')
   .option('--no-ci', 'Skip CI/CD setup')
   .action((projectName, options) => {
-    console.log(chalk.blue('🚀 Initializing Best Practices SDK project...'));
+    console.log(chalk.blue('🚀 Initializing Code Directives project...'));
     console.log(chalk.gray(`Project: ${projectName}`));
     console.log(chalk.gray(`Template: ${options.template}`));
     
@@ -30,7 +30,7 @@ program
 // Validate project command  
 program
   .command('validate')
-  .description('Validate project against best practices standards')
+  .description('Validate project against code directives standards')
   .option('-p, --path <path>', 'Project path to validate', './')
   .option('--fix', 'Automatically fix issues where possible')
   .option('--report', 'Generate validation report')

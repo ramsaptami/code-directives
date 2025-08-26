@@ -1,8 +1,8 @@
-# Best Practices SDK - Technical Specification
+# Code Directives - AI Development Framework
 
 ## Overview
 
-The **Best Practices SDK** standardizes coding practices, repository management, and development workflows. It provides automated validation, clear guidelines, and seamless integration with modern development tools.
+**Code Directives** is an AI-powered development framework that transforms high-level requirements into production-ready applications. It provides automated code generation, validation, and deployment with built-in best practices and intelligent workflows.
 
 ## Technical Architecture
 
@@ -14,7 +14,7 @@ The **Best Practices SDK** standardizes coding practices, repository management,
 
 ### File Structure
 ```
-/best-practices-sdk/
+/code-directives/
 ├── lib/
 │   ├── standards/
 │   │   ├── code-standards.js      // Define code quality rules

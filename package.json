@@ -1,10 +1,10 @@
 {
-  "name": "@company/best-practices-sdk",
+  "name": "@company/code-directives",
   "version": "1.0.0",
-  "description": "SDK for standardizing coding practices, repository management, and development workflows",
+  "description": "AI-powered code directives system for building applications with automated best practices",
   "main": "lib/index.js",
   "bin": {
-    "bp": "cli/index.js"
+    "cd": "cli/index.js"
   },
   "scripts": {
     "start": "node lib/index.js",
@@ -20,12 +20,13 @@
     "docs": "node cli/bp-docs.js"
   },
   "keywords": [
-    "best-practices",
-    "sdk",
-    "code-quality",
+    "code-directives",
+    "ai-development",
     "automation",
+    "code-generation",
     "github-integration",
-    "development-standards"
+    "claude-integration",
+    "development-framework"
   ],
   "author": "Your Company",
   "license": "MIT",
@@ -51,12 +52,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ramsaptami/best-practices-sdk.git"
+    "url": "https://github.com/ramsaptami/code-directives.git"
   },
   "bugs": {
-    "url": "https://github.com/ramsaptami/best-practices-sdk/issues"
+    "url": "https://github.com/ramsaptami/code-directives/issues"
   },
-  "homepage": "https://github.com/ramsaptami/best-practices-sdk#readme",
+  "homepage": "https://github.com/ramsaptami/code-directives#readme",
   "jest": {
     "testEnvironment": "node",
     "collectCoverageFrom": [
