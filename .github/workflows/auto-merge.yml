@@ -1,0 +1,91 @@
+name: Auto Merge Approved PRs
+
+on:
+  pull_request_review:
+    types: [submitted]
+  check_suite:
+    types: [completed]
+  status: {}
+
+jobs:
+  auto-merge:
+    if: github.event.review.state == 'approved' || github.event.check_suite.conclusion == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Check PR status and merge
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get PR number from event
+          if [ "${{ github.event_name }}" = "pull_request_review" ]; then
+            PR_NUMBER=${{ github.event.pull_request.number }}
+          else
+            # Find PR for this commit
+            PR_NUMBER=$(gh pr list --search "${{ github.sha }}" --json number --jq '.[0].number')
+          fi
+          
+          if [ "$PR_NUMBER" = "null" ] || [ -z "$PR_NUMBER" ]; then
+            echo "No PR found for this event"
+            exit 0
+          fi
+          
+          echo "Checking PR #$PR_NUMBER"
+          
+          # Get PR details
+          PR_DATA=$(gh pr view $PR_NUMBER --json state,mergeable,reviewDecision,statusCheckRollupState)
+          
+          STATE=$(echo $PR_DATA | jq -r '.state')
+          MERGEABLE=$(echo $PR_DATA | jq -r '.mergeable')
+          REVIEW_DECISION=$(echo $PR_DATA | jq -r '.reviewDecision')
+          STATUS_CHECKS=$(echo $PR_DATA | jq -r '.statusCheckRollupState')
+          
+          echo "PR State: $STATE"
+          echo "Mergeable: $MERGEABLE"
+          echo "Review Decision: $REVIEW_DECISION"
+          echo "Status Checks: $STATUS_CHECKS"
+          
+          # Check if PR can be auto-merged
+          if [ "$STATE" = "OPEN" ] && \
+             [ "$MERGEABLE" = "MERGEABLE" ] && \
+             [ "$REVIEW_DECISION" = "APPROVED" ] && \
+             [ "$STATUS_CHECKS" = "SUCCESS" ]; then
+            
+            echo "All conditions met - auto-merging PR #$PR_NUMBER"
+            
+            # Add auto-merge comment
+            gh pr comment $PR_NUMBER --body "🤖 **Auto-merging** - All checks passed and PR approved by Claude
+            
+            ✅ Code quality checks passed
+            ✅ Security scans passed  
+            ✅ Tests passed
+            ✅ Claude review approved
+            
+            Merging to main branch..."
+            
+            # Merge the PR
+            gh pr merge $PR_NUMBER --squash --delete-branch
+            
+            echo "✅ PR #$PR_NUMBER successfully merged and branch deleted"
+          else
+            echo "PR #$PR_NUMBER not ready for auto-merge"
+            if [ "$STATE" != "OPEN" ]; then
+              echo "  - PR is not open"
+            fi
+            if [ "$MERGEABLE" != "MERGEABLE" ]; then
+              echo "  - PR has merge conflicts"
+            fi
+            if [ "$REVIEW_DECISION" != "APPROVED" ]; then
+              echo "  - PR not approved (current: $REVIEW_DECISION)"
+            fi
+            if [ "$STATUS_CHECKS" != "SUCCESS" ]; then
+              echo "  - Status checks not passing (current: $STATUS_CHECKS)"
+            fi
+          fi
