@@ -1,7 +1,9 @@
+#!/usr/bin/env node
+
 const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
-const BestPracticesSDK = require('../lib/index');
+const sdk = require('../lib/index');
 
 // Validate project against best practices standards
 module.exports = async function validateProject(options) {
@@ -11,13 +13,10 @@ module.exports = async function validateProject(options) {
     // Load configuration from project
     const config = await loadProjectConfig(options.path);
     
-    // Initialize SDK with project configuration
-    const sdk = new BestPracticesSDK(config);
-    
-    // Run validation
+    // Run validation using SDK
     const validationOptions = {
       path: options.path,
-      standards: options.standards || ['code', 'security', 'performance'],
+      standards: options.standards || ['code', 'security', 'performance', 'maintenance'],
       autoFix: options.fix || false
     };
 
@@ -78,7 +77,8 @@ async function loadProjectConfig(projectPath) {
   return {
     code: { enforceComments: true, maxFunctionLines: 50, testCoverage: 80 },
     security: { scanSecrets: true, vulnerabilityScan: true },
-    performance: { bundleSize: '500KB', loadTime: '2s' }
+    performance: { bundleSize: '500KB', loadTime: '2s' },
+    maintenance: { dependencies: { required: true }, sdkMap: { required: true } }
   };
 }
 

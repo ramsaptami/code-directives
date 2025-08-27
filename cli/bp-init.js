@@ -1,8 +1,8 @@
-const fs = require('fs-extra');
-const path = require('path');
+#!/usr/bin/env node
+
 const chalk = require('chalk');
 const inquirer = require('inquirer');
-const BestPracticesSDK = require('../lib/index');
+const sdk = require('../lib/index');
 
 // Initialize new project with best practices
 module.exports = async function initProject(projectName, options) {
@@ -29,10 +29,7 @@ module.exports = async function initProject(projectName, options) {
     // Interactive prompts for configuration
     const config = await promptForConfiguration(options);
     
-    // Initialize SDK with configuration
-    const sdk = new BestPracticesSDK(config);
-    
-    // Create project
+    // Create project using SDK
     console.log(chalk.gray(`Creating project: ${projectName}`));
     console.log(chalk.gray(`Template: ${config.template}`));
     console.log(chalk.gray(`Location: ./${projectName}\n`));
@@ -40,7 +37,6 @@ module.exports = async function initProject(projectName, options) {
     const result = await sdk.init({
       projectName,
       template: config.template,
-      github: config.setupGitHub,
       autoSetupCI: config.setupCI
     });
 

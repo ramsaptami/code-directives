@@ -4,20 +4,43 @@
   "description": "AI-powered code directives system for building applications with automated best practices",
   "main": "lib/index.js",
   "bin": {
-    "cd": "cli/index.js"
+    "bp": "cli/index.js",
+    "bp-init": "cli/bp-init.js",
+    "bp-validate": "cli/bp-validate.js",
+    "bp-audit": "cli/bp-audit.js",
+    "bp-docs": "cli/bp-docs.js",
+    "bp-git": "cli/bp-git.js"
+  },
+  "files": [
+    "lib/",
+    "cli/",
+    "templates/",
+    "docs/"
+  ],
+  "exports": {
+    ".": {
+      "import": "./lib/index.js",
+      "require": "./lib/index.js"
+    },
+    "./validators": "./lib/validators/index.js",
+    "./integrations": "./lib/integrations/index.js",
+    "./standards": "./lib/standards/index.js"
   },
   "scripts": {
     "start": "node lib/index.js",
     "test": "jest",
     "test:unit": "jest tests/unit",
     "test:integration": "jest tests/integration",
+    "test:coverage": "jest --coverage",
     "lint": "eslint lib/ cli/ --fix",
     "lint:check": "eslint lib/ cli/",
     "audit": "npm audit --audit-level=high",
     "build": "echo 'Build completed'",
     "validate": "node cli/bp-validate.js",
     "init": "node cli/bp-init.js",
-    "docs": "node cli/bp-docs.js"
+    "docs": "node cli/bp-docs.js",
+    "prepare": "husky install",
+    "pre-commit": "lint-staged"
   },
   "keywords": [
     "code-directives",
@@ -26,7 +49,14 @@
     "code-generation",
     "github-integration",
     "claude-integration",
-    "development-framework"
+    "development-framework",
+    "best-practices",
+    "code-quality",
+    "security-scanning",
+    "performance-optimization",
+    "ci-cd",
+    "sdk",
+    "developer-tools"
   ],
   "author": "Your Company",
   "license": "MIT",

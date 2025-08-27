@@ -1,6 +1,19 @@
 name: Auto Merge Approved PRs
 
 on:
+  # Allow this workflow to be called from other repositories
+  workflow_call:
+    inputs:
+      required_checks:
+        description: 'Required status checks (comma-separated)'
+        required: false
+        type: string
+        default: 'create-pr'
+    secrets:
+      GITHUB_TOKEN:
+        required: true
+  
+  # Also support direct usage in this repository
   pull_request_review:
     types: [submitted]
   check_suite:
