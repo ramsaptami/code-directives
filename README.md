@@ -1,16 +1,26 @@
 # Code Directives SDK
 
+> **🚨 REPOSITORY DIRECTIVE: This package lives at `git@github.com:ramsaptami/code-directives.git`**  
+> **All commits and changes MUST be made to the dedicated repository, not to tessellate!**
+
 Automated best practices enforcement for development projects.
 
 ## Installation
 
 ```bash
 # Global installation
-npm install -g @company/code-directives
+npm install -g @ramsaptami/code-directives
 
 # Project-level installation
-npm install --save-dev @company/code-directives
+npm install --save-dev @ramsaptami/code-directives
 ```
+
+## Repository Information
+
+- **Primary Repository**: `git@github.com:ramsaptami/code-directives.git`
+- **Package Name**: `@ramsaptami/code-directives`
+- **Development**: Always commit changes to the dedicated repository
+- **Usage**: Install as dependency in other projects
 
 ## Features
 
