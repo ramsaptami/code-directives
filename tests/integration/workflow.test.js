@@ -67,7 +67,8 @@ describe('Integration Tests - Full Workflow', () => {
 
   describe('Code Validation Workflow', () => {
     beforeEach(async () => {
-      // Ensure test project exists
+      // Clean up and recreate test project directory
+      await fs.remove(testProjectPath);
       await fs.ensureDir(testProjectPath);
       await fs.ensureDir(path.join(testProjectPath, 'src'));
     });
@@ -163,6 +164,13 @@ function multiply(a, b) {
   });
 
   describe('Security Scanning Workflow', () => {
+    beforeEach(async () => {
+      // Clean up and recreate test project directory
+      await fs.remove(testProjectPath);
+      await fs.ensureDir(testProjectPath);
+      await fs.ensureDir(path.join(testProjectPath, 'src'));
+    });
+
     test('should detect various types of secrets', async () => {
       const securityFile = path.join(testProjectPath, 'src', 'security-test.js');
       const securityContent = `const config = {
@@ -191,6 +199,13 @@ function multiply(a, b) {
   });
 
   describe('Performance Analysis Workflow', () => {
+    beforeEach(async () => {
+      // Clean up and recreate test project directory
+      await fs.remove(testProjectPath);
+      await fs.ensureDir(testProjectPath);
+      await fs.ensureDir(path.join(testProjectPath, 'src'));
+    });
+
     test('should analyze bundle size and performance patterns', async () => {
       // Create files of various sizes
       const smallFile = path.join(testProjectPath, 'src', 'small.js');
@@ -232,6 +247,13 @@ function multiply(a, b) {
   });
 
   describe('Documentation Generation Workflow', () => {
+    beforeEach(async () => {
+      // Clean up and recreate test project directory
+      await fs.remove(testProjectPath);
+      await fs.ensureDir(testProjectPath);
+      await fs.ensureDir(path.join(testProjectPath, 'src'));
+    });
+
     test('should generate documentation from source code', async () => {
       // Create source files with documentation
       const apiFile = path.join(testProjectPath, 'src', 'api.js');

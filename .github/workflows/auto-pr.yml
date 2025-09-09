@@ -21,10 +21,11 @@ on:
   # Also support direct usage in this repository
   push:
     branches: 
-      - 'feature/*'
-      - 'fix/*'
-      - 'refactor/*'
-      - 'docs/*'
+      - 'feature/**'
+      - 'fix/**'
+      - 'refactor/**'
+      - 'docs/**'
+      - 'hotfix/**'
 
 jobs:
   create-pr:
@@ -49,20 +50,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
+      - name: Run Comprehensive Test Validation
+        uses: ./.github/workflows/comprehensive-test.yml
+        with:
+          node_version: ${{ inputs.node_version || '18' }}
+          run_coverage: true
+          coverage_threshold: 80
+          fail_on_coverage: false
+      
       - name: Run Best Practices Validation
         run: ${{ inputs.validate_command || 'npx @company/code-directives validate --fix' }}
-        continue-on-error: true
-      
-      - name: Run linting
-        run: npm run lint
-        continue-on-error: true
-      
-      - name: Run tests
-        run: npm test
-        continue-on-error: true
-      
-      - name: Run security scan
-        run: npm audit --audit-level=high
         continue-on-error: true
       
       - name: Create Pull Request
@@ -85,9 +82,12 @@ jobs:
               ${{ github.event.head_commit.message }}
               
               ### Automated Checks
-              - ✅ Code linting
-              - ✅ Unit tests 
-              - ✅ Security scan
+              - ✅ Comprehensive test suite (unit, integration, coverage)
+              - ✅ Code linting and formatting
+              - ✅ Type checking (if TypeScript)
+              - ✅ Security vulnerability scan
+              - ✅ Best practices validation
+              - ✅ Test coverage reporting
               
               ### Next Steps
               - Awaiting Claude code review

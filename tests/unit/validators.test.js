@@ -14,6 +14,14 @@ describe('Validators', () => {
     await fs.ensureDir(path.join(testProjectPath, 'test'));
   });
 
+  beforeEach(async () => {
+    // Clean up and recreate test project structure before each test
+    await fs.remove(testProjectPath);
+    await fs.ensureDir(testProjectPath);
+    await fs.ensureDir(path.join(testProjectPath, 'src'));
+    await fs.ensureDir(path.join(testProjectPath, 'test'));
+  });
+
   afterAll(async () => {
     // Clean up test project
     await fs.remove(testProjectPath);

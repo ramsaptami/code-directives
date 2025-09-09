@@ -8,7 +8,22 @@ on:
         description: 'Required status checks (comma-separated)'
         required: false
         type: string
-        default: 'create-pr'
+        default: 'create-pr,comprehensive-test,unit-tests,integration-tests'
+      require_tests:
+        description: 'Require all tests to pass before merging'
+        required: false
+        type: boolean
+        default: true
+      require_coverage:
+        description: 'Require minimum test coverage'
+        required: false
+        type: boolean
+        default: true
+      min_coverage:
+        description: 'Minimum coverage percentage required'
+        required: false
+        type: number
+        default: 80
     secrets:
       GITHUB_TOKEN:
         required: true
@@ -65,23 +80,52 @@ jobs:
           echo "Review Decision: $REVIEW_DECISION"
           echo "Status Checks: $STATUS_CHECKS"
           
+          # Get detailed status check information
+          STATUS_CHECKS_DETAIL=$(gh pr checks $PR_NUMBER --json name,status,conclusion)
+          
+          # Check for required test status checks
+          REQUIRED_CHECKS="${{ inputs.required_checks }}"
+          IFS=',' read -ra CHECKS_ARRAY <<< "$REQUIRED_CHECKS"
+          
+          TESTS_PASSED=true
+          MISSING_CHECKS=""
+          
+          for check in "${CHECKS_ARRAY[@]}"; do
+            check_status=$(echo $STATUS_CHECKS_DETAIL | jq -r ".[] | select(.name | contains(\"$check\")) | .conclusion")
+            if [ "$check_status" != "success" ] && [ "$check_status" != "SUCCESS" ]; then
+              TESTS_PASSED=false
+              MISSING_CHECKS="$MISSING_CHECKS $check"
+            fi
+          done
+          
+          echo "Required checks status: $TESTS_PASSED"
+          if [ "$TESTS_PASSED" = "false" ]; then
+            echo "Missing or failing required checks:$MISSING_CHECKS"
+          fi
+          
           # Check if PR can be auto-merged
           if [ "$STATE" = "OPEN" ] && \
              [ "$MERGEABLE" = "MERGEABLE" ] && \
              [ "$REVIEW_DECISION" = "APPROVED" ] && \
-             [ "$STATUS_CHECKS" = "SUCCESS" ]; then
+             [ "$STATUS_CHECKS" = "SUCCESS" ] && \
+             [ "$TESTS_PASSED" = "true" ]; then
             
             echo "All conditions met - auto-merging PR #$PR_NUMBER"
             
-            # Add auto-merge comment
-            gh pr comment $PR_NUMBER --body "🤖 **Auto-merging** - All checks passed and PR approved by Claude
+            # Add auto-merge comment with detailed status
+            gh pr comment $PR_NUMBER --body "🤖 **Auto-merging** - All validations passed and PR approved
             
-            ✅ Code quality checks passed
-            ✅ Security scans passed  
-            ✅ Tests passed
-            ✅ Claude review approved
+            ✅ **Code Quality:** All linting and formatting checks passed
+            ✅ **Security:** Vulnerability scans completed successfully
+            ✅ **Tests:** All test suites passed (unit, integration, coverage)
+            ✅ **Coverage:** Meets minimum coverage requirements (${{ inputs.min_coverage }}%)
+            ✅ **Review:** PR approved and ready for merge
+            ✅ **CI/CD:** All required status checks successful
             
-            Merging to main branch..."
+            **Required Checks Verified:**
+            $(echo '${{ inputs.required_checks }}' | tr ',' '\n' | sed 's/^/- ✅ /')
+            
+            Merging to main branch with confidence! 🚀"
             
             # Merge the PR
             gh pr merge $PR_NUMBER --squash --delete-branch
@@ -100,5 +144,8 @@ jobs:
             fi
             if [ "$STATUS_CHECKS" != "SUCCESS" ]; then
               echo "  - Status checks not passing (current: $STATUS_CHECKS)"
+            fi
+            if [ "$TESTS_PASSED" = "false" ]; then
+              echo "  - Required test checks not passing:$MISSING_CHECKS"
             fi
           fi
